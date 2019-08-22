@@ -130,7 +130,6 @@ a.button:active {
     font-size: 20px;
     text-align: center;
     min-height: 100vh;
-    /*min-height: max-content;*/
 }
 
 .main-all h1 {

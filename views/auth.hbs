@@ -28,9 +28,9 @@
         </div>
         <div class="nav">
             <ul class="nav-list">
-                <li class="nav-item"><a href="http://localhost:63342/PC_app/index.html"><span> Главная </span></a></li>
-                <li class="nav-item"><a href="http://localhost:63342/PC_app/pages/about.html"><span> О нас </span></a></li>
-                <li class="nav-item"><a href="http://localhost:63342/PC_app/pages/services.html"><span> Услуги </span></a></li>
+                <li class="nav-item"><a href="http://localhost:3000/index.html"><span> Главная </span></a></li>
+                <li class="nav-item"><a href="http://localhost:3000/pages/about.html"><span> О нас </span></a></li>
+                <li class="nav-item"><a href="http://localhost:3000/pages/services.html"><span> Услуги </span></a></li>
                 <li class="nav-item"><a href="/order_online"><span> Заказать </span></a></li>
             </ul>
         </div>
@@ -40,59 +40,25 @@
     <div class="central">
 
         <main class="main main-order main-auth">
-             <table>
-                 <!--Удалить после отладки-->
-                <tr>
-                    <th>Логин</th>
-                    <th>Пароль</th>
-                    <th></th>
-                </tr>
-                {{#each authorization}}
-                    <tr>
-                        <td>{{this.login}}</td>
-                        <td>{{this.password}}</td>
-                    </tr>
-                {{/each}}
-            </table>
-
-            <!--<form class="contact-form" action="#" method="post" name="contact_form">-->
-                <form class="contact-form" action="http://localhost:3000/"  name="contact_form">
+            <div class="message"><p>{{this.msg1}}</p><p>{{this.msg2}}</p></div>
+                <form class="contact-form" action="http://localhost:3000/login"  name="contact_form" method="POST">
                     <ul>
                         <li>
-                            <h2>Для работы с базой данных, пожалуйста, пройдите авторизацию !</h2>
+                            <h2>Для работы с базой данных,<br> пожалуйста, пройдите авторизацию !</h2>
                         </li>
                         <li>
-                            <label for="name">Логин:</label>
-                            <input class="input" type="text" id="name" placeholder="Пользователь" required minlength="3"/>
+                            <label for="user" class="input">Логин:</label>
+                            <input class="input" type="text" id="user" name='user' placeholder="Пользователь" required minlength="3"/>
                         </li>
                         <li>
                             <label for="title">Пароль:</label>
-                            <input type="password" id="password" placeholder="Введите пароль" required minlength="5"/>
+                            <input type="password" id="password" name='password' placeholder="Введите пароль" required minlength="5"/>
                         </li>
                         <li>
                             <button class="submit" type="submit">Войти</button>
                         </li>
                     </ul>
                 </form>
-
-
-            <!--<script>-->
-                <!--// не работает-->
-                <!--const passwordEntered = document.querySelector(".password").value;-->
-                <!--const passwordEnteredType = typeof passwordEntered;-->
-                <!--const buttonPressed = document.querySelector(".submit");-->
-                <!--const l = req.body.password;-->
-
-                <!--function someFunc() {-->
-
-                    <!--alert(`Вы ввели : ${l}`);-->
-
-                <!--}-->
-
-                <!--buttonPressed.onclick = someFunc;-->
-
-
-            <!--</script>-->
 
         </main>
 

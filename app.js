@@ -1,6 +1,7 @@
 const mysql = require("mysql2");
 const express = require("express");
 const bodyParser = require("body-parser");
+const session = require('express-session');
 
 const app = express();
 const urlencodedParser = bodyParser.urlencoded({extended: false});
@@ -13,7 +14,17 @@ const pool = mysql.createPool({
   password: ""
 });
 
+const SESSION_TIME = 60 * 60 * 1000;
+const SESSION_SECRET = 'RandomWord';
+
 app.set("view engine", "hbs");
+app.use(express.static(__dirname + "/public"));
+app.use(session({
+  secret: SESSION_SECRET,
+  resave : false,
+  saveUninitialized : true,
+  cookie: { maxAge: SESSION_TIME }
+}));
 
 
 // получение списка услуг для веб-сайта
@@ -130,16 +141,43 @@ app.get("/orders_online_list", function (req, res) {
 
 // получение списка для авторизации
 app.get("/auth", function (req, res) {
-  pool.query("SELECT * FROM authorization", function (err, data) {
-    if (err) return console.log(err);
     res.render("auth.hbs", {
-      authorization: data
     });
-  });
 });
 
+// const isSessionEmpty = (req) => { return req.session.userId ? true : false };
+
+// if(!isSessionEmpty) {
+//   res.render("auth.hbs", {msg: 'неверный логин или пароль'});
+//   return;
+//  }
+
+// получение списка для авторизации
+app.post("/login", urlencodedParser, function (req, res) {
+
+  // if(isSessionEmpty(req)) {
+  //   res.redirect("/");
+  // return;
+  // }
+  pool.query("select id_user, login, password from authorization where login=? and password=?", [req.body.user, req.body.password],  (err, data) => {
+
+    if (err) return console.log(err);
+    if(!data.length) {
+      res.render("auth.hbs", {msg1: 'Неверный логин или пароль!', msg2: 'Попробуйте еще раз.'});
+      return;
+    } else {
+      req.session.userId = data[0].id_user;
+      req.session.save(function() {
+        res.render("index.hbs");
+      });
+    }
+  })
+});
+
+
+
 // переход на общую страницу для работы с базой
-app.get("/", function (req, res) {
+app.get("/main", function (req, res) {
   res.render("index.hbs")
 });
 
@@ -277,7 +315,7 @@ app.post("/create_service", urlencodedParser, function (req, res) {
   });
 });
 
-/ ////// Добавление заказа ////////////////
+// ////// Добавление заказа ////////////////
 
 // возвращаем форму для добавления данных
 app.get("/create_order", function (req, res) {
@@ -573,9 +611,7 @@ app.post("/edit_order/", urlencodedParser, function (req, res) {
     if (err) return console.log(err);
     res.redirect("/orders");
   });
-
 });
-
 
 // ///////////////////////ОТЧЕТЫ ////////////////////////////////////
 
@@ -601,16 +637,13 @@ app.get("/report_not_paid", function (req, res) {
       } else {
         element.date_finish = null;
       }
-
     });
 
     res.render("report_not_paid.hbs", {
       orders: data
     });
   });
-
 });
-
 
 // Невыполненные заказы
 
@@ -634,7 +667,6 @@ app.get("/report_not_finished", function (req, res) {
       orders: data
     });
   });
-
 });
 
 // Прайс-лист
@@ -646,9 +678,7 @@ app.get("/report_price", function (req, res) {
       services: data
     });
   });
-
 });
-
 
 // Вип-клиенты
 
@@ -659,11 +689,9 @@ app.get("/report_clients_vip", function (req, res) {
       clients: data
     });
   });
-
 });
 
-
-// Скидки
+// Скидки-сводка
 
 app.get("/report_discount_sum", function (req, res) {
   pool.query("SELECT  SUM (services.price-price_final) FROM orders JOIN services on services.id_service=orders.id_service WHERE price_final-services.price IS NOT null AND price_final-services.price != 0", function (err, data) {
@@ -672,9 +700,7 @@ app.get("/report_discount_sum", function (req, res) {
       orders: data,
     });
   });
-
 });
-
 
 app.get("/report_discount", function (req, res) {
   pool.query("SELECT id_order, date_order, services.name_service, paid, services.price, price_final, price_final-services.price, comments FROM orders JOIN services on services.id_service=orders.id_service WHERE price_final-services.price IS NOT null AND price_final-services.price != 0 AND `price_final` IS NOT null ORDER BY price_final-services.price", function (err, data) {
@@ -693,10 +719,9 @@ app.get("/report_discount", function (req, res) {
       orders: data,
     });
   });
-
 });
 
-// Скидки
+// Скидки-расшифровка
 
 app.get("/report_discount_sum", function (req, res) {
   pool.query("SELECT  SUM (services.price-price_final) FROM orders JOIN services on services.id_service=orders.id_service WHERE price_final-services.price IS NOT null AND price_final-services.price != 0", function (err, data) {
@@ -706,9 +731,7 @@ app.get("/report_discount_sum", function (req, res) {
       orders: data,
     });
   });
-
 });
-
 
 // Популярность услуг
 
@@ -719,7 +742,6 @@ app.get("/report_services_popular", function (req, res) {
       orders: data,
     });
   });
-
 });
 
 // Загруженность участков
@@ -731,7 +753,6 @@ app.get("/report_spec_total", function (req, res) {
       orders: data,
     });
   });
-
 });
 
 // Загруженность мастеров
@@ -743,12 +764,10 @@ app.get("/report_masters_busy", function (req, res) {
       orders: data,
     });
   });
-
 });
 
-app.listen(3000, "127.0.0.1");
+app.listen(3000, "127.0.0.1",() =>{console.log('Server was started!')});
 
 app.use('/css', express.static('css'));
 app.use('/assets', express.static('assets'));
 app.use('/scripts', express.static('scripts'));
-// app.use(favicon(path.join(__dirname, 'assets', 'favicon.ico')));

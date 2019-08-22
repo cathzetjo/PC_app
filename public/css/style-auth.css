@@ -5,11 +5,12 @@
     font-size: 25px;
     color: #11102f;
     text-shadow: 0 0 #cbf9f7, 0 1px #f2f9d7, 2px 0 #dff9e5, 0 -1px #8b9177;
-    height: 91.9vh;
+    /*height: 91.9vh;*/
     min-height: max-content;
 }
+
 .main-auth .contact-form {
-    padding: 10% 20%;
+    padding: 3% 15%;
 }
 
 .main-auth table {
@@ -38,4 +39,14 @@
 .contact-form label {
     width: 120px;
     padding-left: 100px;
+}
+
+.message {
+    margin-top: 5%;
+    max-width: fit-content;
+    align-self: center;
+    text-shadow: none;
+    color: #d81c08;
+    min-height: 60px;
+    text-align: center;
 }
