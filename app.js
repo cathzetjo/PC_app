@@ -18,7 +18,7 @@ const SESSION_TIME = 60 * 60 * 1000;
 const SESSION_SECRET = 'RandomWord';
 
 app.set("view engine", "hbs");
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/"));
 app.use(session({
   secret: SESSION_SECRET,
   resave : false,
