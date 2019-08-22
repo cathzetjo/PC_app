@@ -252,7 +252,8 @@
 }
 
 .help-pic {
-    width: 100px;
+    max-width: 100px;
+    max-height: 100px;
     margin-right: 1%;
 }
 
@@ -301,6 +302,7 @@
     flex-direction: row;
     padding-bottom: 3%;
     margin-top: -3%;
+    justify-content: center;
 }
 
 .services div {
@@ -353,6 +355,7 @@
     font-size: 25px;
     align-self: center;
     color: #0a071f;
+    text-align: center;
 }
 
 .vip:hover {
